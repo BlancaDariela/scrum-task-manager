@@ -1,10 +1,10 @@
 # Equipo 1 - CRUD de Tareas
 
-## 🎯 Objetivo
+##  Objetivo
 
 Implementar las operaciones básicas de las tareas.
 
-## 🧠 Tareas
+##  Tareas
 
 * Crear tarea
 * Obtener todas las tareas
@@ -12,7 +12,7 @@ Implementar las operaciones básicas de las tareas.
 * Actualizar tarea
 * Eliminar tarea
 
-## 🔌 Endpoints
+##  Endpoints
 
 * POST /team1/tasks
 * GET /team1/tasks
@@ -20,7 +20,7 @@ Implementar las operaciones básicas de las tareas.
 * PUT /team1/tasks/{id}
 * DELETE /team1/tasks/{id}
 
-## 📌 Reglas
+##  Reglas
 
 * Usar la base de datos
 * Manejar errores básicos
