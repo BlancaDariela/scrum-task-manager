@@ -27,3 +27,16 @@ Repositorio oficial de la práctica de Scrum.
 git clone https://github.com/BlancaDariela/scrum-task-manager.git
 cd scrum-task-manager
 git checkout team-N  # cambia N por tu número de equipo
+
+# Crea y activa el  el entorno virtual
+python -m venv venv
+source venv/bin/activate  # Windows: venv\Scripts\activate
+
+# Instala el requirements.txt 
+pip install -r requirements.txt
+
+# Para corroborar enpoints ejecuta
+uvicorn app.main:app --reload
+
+# y despues entra a
+http://127.0.0.1:8000/docs
