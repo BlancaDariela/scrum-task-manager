@@ -15,7 +15,7 @@ def workflow_task(name: str):
         if t["name"] == name:
             raise HTTPException(status_code=409, detail="Tarea duplicada")
 
-    # TODO: crear tarea
+    # Crear tarea
     task = {
         "name": name,
         "status": "pending"
@@ -23,11 +23,8 @@ def workflow_task(name: str):
 
     tasks.append(task)
 
-    # TODO: marcar como completada
-    task["status"] = "completed"
-
     return {
-        "message": "Flujo completado",
+        "message": "Tarea agregada exitosamente",
         "task": task
     }
 
