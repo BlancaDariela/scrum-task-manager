@@ -21,5 +21,6 @@ def workflow_task(name: str):
 
 @router.get("/workflow/result")
 def get_result():
-    # TODO: devolver resultados
+    if not tasks:
+        raise HTTPException(status_code=404, detail="No hay tareas todavía")
     return {"tasks": tasks}
