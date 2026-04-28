@@ -1,4 +1,6 @@
 from fastapi import APIRouter
+from app.database import SessionLocal, engine, Base
+from app.models import Task
 
 router = APIRouter(prefix="/team1", tags=["Team 1 - CRUD"])
 
