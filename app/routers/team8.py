@@ -36,9 +36,20 @@ def report_pending():
     return {"message": "Reporte pendientes"}
 
 @router.get("/reports/full")
-def report_full():
+def report_full(db: Session = Depends(get_db)):
     # TODO: reporte completo
-    return {"message": "Reporte completo"}
+    tareas = db.query(Task).all()
+    return {
+        "total":len(tareas),
+        "data":[
+            {
+                "id":tarea.id,
+                "name": tarea.name,
+                "status":tarea.status,
+            }
+            for tarea in tareas
+        ]
+    }
 
 @router.get("/reports/summary")
 def report_summary():
