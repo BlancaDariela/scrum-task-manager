@@ -2,14 +2,26 @@ from fastapi import APIRouter, HTTPException
 from app.database import SessionLocal, engine, Base
 from app.models import Task
 from app.schemas import TaskResponse
+from app.schemas import TaskCreate, TaskResponse
 
 router = APIRouter(prefix="/team1", tags=["Team 1 - CRUD"])
 
-@router.post("/tasks")
-def create_task():
-    # TODO: crear tarea en la base de datos
-    return {"message": "Crear tarea (pendiente)"}
 
+@router.post("/tasks")
+def create_task(task: TaskCreate):
+    if not task.name.strip():
+        raise HTTPException(status_code=400, detail="El nombre de la tarea no puede estar vacío")
+    db = SessionLocal()
+    try:
+        new_task = Task(name=task.name, status="pending")
+        db.add(new_task)
+        db.commit()
+        db.refresh(new_task)
+        return new_task
+    finally:
+        db.close()
+
+    
 @router.get("/tasks")
 def get_tasks():
     # TODO: obtener todas las tareas
