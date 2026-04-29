@@ -31,8 +31,17 @@ def report_completed(db: Session = Depends(get_db)):
     }
 
 @router.get("/reports/pending")
-def report_pending():
+def report_pending(db: Session = Depends(get_db)):
     # TODO: reporte pendientes
+    # Filtrar directamente en la base de datos por el estatus "pending"
+    tareas_pendientes = db.query(Task).filter(Task.status == "pending").all()
+    
+    return{
+        "message": "Reporte de tareas pendientes",
+        "total_pendientes": len(tareas_pendientes),
+        "data": tareas_pendientes
+    }
+    
     return {"message": "Reporte pendientes"}
 
 @router.get("/reports/full")
