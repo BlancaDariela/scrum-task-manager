@@ -1,11 +1,21 @@
-from fastapi import APIRouter
+from fastapi import APIRouter, Depends
+from sqlalchemy.orm import Session
+from app.database import SessionLocal
+from app.models import Task
 
 router = APIRouter(prefix="/team2", tags=["Team 2 - Listado"])
 
+def get_db():
+    db = SessionLocal()
+    try:
+        yield db
+    finally:
+        db.close()
+
 @router.get("/tasks/list")
-def list_tasks():
-    # TODO: listar tareas
-    return {"message": "Listado de tareas"}
+def list_tasks(db: Session = Depends(get_db)):
+    tasks = db.query(Task).all()
+    return tasks
 
 @router.get("/tasks/sorted/name")
 def sort_by_name():
