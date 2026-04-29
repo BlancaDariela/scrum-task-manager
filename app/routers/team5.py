@@ -34,13 +34,38 @@ def completed_tasks():
 
 @router.get("/stats/percentage")
 def percentage():
-    # TODO: calcular porcentaje
-    return {"percentage": 0}
+    conn = sqlite3.connect(DB_NAME)
+    cursor = conn.cursor()
+
+    cursor.execute("SELECT COUNT(*) FROM tasks")
+    total = cursor.fetchone()[0]
+
+    cursor.execute("SELECT COUNT(*) FROM tasks WHERE status = 'completed'")
+    completed = cursor.fetchone()[0]
+
+    conn.close()
+
+    if total == 0:
+        return {"percentage": 0}
+
+    percentage = (completed / total) * 100
+
+    return {"percentage": round(percentage, 2)}
 
 @router.get("/stats/avg-length")
 def avg_length():
-    # TODO: promedio de longitud
-    return {"average_length": 0}
+    conn = sqlite3.connect(DB_NAME)
+    cursor = conn.cursor()
+
+    cursor.execute("SELECT AVG(LENGTH(description)) FROM tasks")
+    avg = cursor.fetchone()[0]
+
+    conn.close()
+
+    if avg is None:
+        return {"average_length": 0}
+
+    return {"average_length": round(avg, 2)}
 
 @router.get("/stats/summary")
 def summary():
