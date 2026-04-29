@@ -33,7 +33,16 @@ def filter_tasks(state: str, db: Session = Depends(get_db)):
     tasks = db.query(Task).filter(Task.status == state).all()
     return tasks
 
-@router.get("/tasks/search/advanced")
-def advanced_search(name: str = "", state: str = ""):
-    # TODO: búsqueda combinada
-    return {"message": "Búsqueda avanzada"}
+@router.get("/tasks/search/advanced", response_model=List[TaskResponse])
+def advanced_search(name: str = "", state: str = "", db: Session = Depends(get_db)):
+    query = db.query(Task)
+
+    if name:
+        query = query.filter(Task.name.ilike(f"%{name}%"))
+    if state:
+        valid_states = ["pending", "completed"]
+        if state not in valid_states:
+            raise HTTPException(status_code=400, detail=f"Estado invalido. Usa: {valid_states}")
+        query = query.filter(Task.status == state)
+
+    return query.all()
