@@ -8,28 +8,26 @@ router = APIRouter(prefix="/team5", tags=["Team 5 - Estadísticas"])
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 DB_NAME = os.path.join(BASE_DIR, "Data", "tasks.db")
 
+def fetch_one(query, params=()):
+    with sqlite3.connect(DB_NAME) as conn:
+        cursor = conn.cursor()
+        cursor.execute(query, params)
+        result = cursor.fetchone()
+        return result[0] if result else 0
+
 
 @router.get("/stats/total")
 def total_tasks():
-    conn = sqlite3.connect(DB_NAME)
-    cursor = conn.cursor()
-
-    cursor.execute("SELECT COUNT(*) FROM tasks")
-    total = cursor.fetchone()[0]
-
-    conn.close()
+    total = fetch_one("SELECT COUNT(*) FROM tasks")
     return {"total": total}
 
 
 @router.get("/stats/completed")
 def completed_tasks():
-    conn = sqlite3.connect(DB_NAME)
-    cursor = conn.cursor()
-
-    cursor.execute("SELECT COUNT(*) FROM tasks WHERE status = 'completed'")
-    completed = cursor.fetchone()[0]
-
-    conn.close()
+    completed = fetch_one(
+        "SELECT COUNT(*) FROM tasks WHERE status = ?", 
+        ("completed",)
+    )
     return {"completed": completed}
 
 @router.get("/stats/percentage")
