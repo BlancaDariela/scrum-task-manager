@@ -37,20 +37,30 @@ def percentage():
     conn = sqlite3.connect(DB_NAME)
     cursor = conn.cursor()
 
-    cursor.execute("SELECT COUNT(*) FROM tasks")
-    total = cursor.fetchone()[0]
-
-    cursor.execute("SELECT COUNT(*) FROM tasks WHERE status = 'completed'")
-    completed = cursor.fetchone()[0]
+    # 🔥 una sola consulta más eficiente
+    cursor.execute("""
+        SELECT 
+            COUNT(*),
+            SUM(CASE WHEN status = 'completed' THEN 1 ELSE 0 END)
+        FROM tasks
+    """)
+    total, completed = cursor.fetchone()
 
     conn.close()
 
     if total == 0:
-        return {"percentage": 0}
+        return {
+            "percentage": 0
+        }
 
-    percentage = (completed / total) * 100
+    percentage_value = (completed / total) * 100
 
-    return {"percentage": round(percentage, 2)}
+    return {
+        "total": total,
+        "completed": completed,
+        "percentage": round(percentage_value, 2)
+    }
+
 
 @router.get("/stats/avg-length")
 def avg_length():
@@ -62,10 +72,9 @@ def avg_length():
 
     conn.close()
 
-    if avg is None:
-        return {"average_length": 0}
-
-    return {"average_length": round(avg, 2)}
+    return {
+        "average_length": round(avg, 2) if avg is not None else 0
+    }
 
 @router.get("/stats/summary")
 def summary():
