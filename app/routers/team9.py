@@ -6,12 +6,16 @@ tasks = []  # simulación
 
 @router.post("/workflow/task", status_code=201)
 def workflow_task(name: str):
-    # Crear tarea
-    task = {
-        "name": name,
-        "status": "pending"
-    }
+    name = name.strip()
 
+    if not name:
+        raise HTTPException(status_code=400, detail="El nombre no puede estar vacío")
+    if len(name) < 3:
+        raise HTTPException(status_code=400, detail="El nombre debe tener al menos 3 caracteres")
+    if any(t["name"] == name for t in tasks):
+        raise HTTPException(status_code=409, detail="La tarea ya existe")
+
+    task = {"name": name, "status": "pending"}
     tasks.append(task)
 
     return {
