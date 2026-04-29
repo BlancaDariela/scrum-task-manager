@@ -1,15 +1,34 @@
+from http.client import HTTPException
+
+from app.database import SessionLocal
 from fastapi import APIRouter
 
 router = APIRouter(prefix="/team3", tags=["Team 3 - Estados"])
 
+def get_db():
+    db = SessionLocal()
+    try:
+        yield db
+    finally:
+        db.close()
+
 @router.put("/tasks/{id}/complete")
-def complete_task(id: int):
-    # TODO: marcar como completada
+def complete_task(id: int, db: Session = Depends(get_db)):
+    task = db.query(Task).filter(Task.id == id).first()
+    if not task:
+        raise HTTPException(status_code=404, detail="Tarea no encontrada")
+    
+    task.status = "completed"
     return {"message": f"Tarea {id} completada"}
 
 @router.put("/tasks/{id}/pending")
-def pending_task(id: int):
-    # TODO: marcar como pendiente
+def pending_task(id: int, db: Session = Depends(get_db)):
+    task = db.query(Task).filter(Task.id == id).first()
+    if not task:
+        raise HTTPException(status_code=404, detail="Tarea no encontrada")
+    
+    task.status = "pending"
+    db.commit()
     return {"message": f"Tarea {id} pendiente"}
 
 @router.put("/tasks/{id}/status")
