@@ -37,7 +37,6 @@ def percentage():
     conn = sqlite3.connect(DB_NAME)
     cursor = conn.cursor()
 
-    # 🔥 una sola consulta más eficiente
     cursor.execute("""
         SELECT 
             COUNT(*),
