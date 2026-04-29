@@ -28,9 +28,9 @@ def sort_by_length():
     return {"message": "Ordenar por longitud"}
 
 @router.get("/tasks/limit")
-def limit_tasks(limit: int = 5):
-    # TODO: limitar resultados
-    return {"message": f"Mostrar {limit} tareas"}
+def limit_tasks(limit: int = 5, db: Session = Depends(get_db)):
+    tasks = db.query(Task).limit(limit).all()
+    return tasks
 
 @router.get("/tasks/advanced")
 def advanced():
