@@ -46,5 +46,17 @@ def update_task(id: int):
 
 @router.delete("/tasks/{id}")
 def delete_task(id: int):
-    # TODO: eliminar tarea
-    return {"message": f"Eliminar tarea {id} (pendiente)"}
+    db = SessionLocal()
+    try:
+        task = db.query(Task).filter(Task.id == id).first()
+
+        if not task:
+            raise HTTPException(status_code=404, detail="Tarea no encontrada")
+
+        db.delete(task)
+        db.commit()
+
+        return {"message": f"Tarea con id {id} eliminada correctamente"}
+    
+    finally:
+        db.close()
