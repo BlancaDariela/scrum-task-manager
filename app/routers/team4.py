@@ -1,16 +1,9 @@
-<<<<<<< HEAD
-from fastapi import APIRouter, HTTPException, Depends
-from sqlalchemy.orm import Session
-from app.database import SessionLocal
-from app.models import Task
-=======
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 from app.database import SessionLocal
 from app.models import Task
 from app.schemas import TaskResponse
 from typing import List
->>>>>>> 98593426852d22e551fbadb552677ac50f8f7deb
 
 router = APIRouter(prefix="/team4", tags=["Team 4 - Búsqueda"])
 
