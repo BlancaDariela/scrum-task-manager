@@ -1,11 +1,21 @@
-from fastapi import APIRouter
+from fastapi import APIRouter, HTTPException, Depends
+from sqlalchemy.orm import Session
+from app.database import SessionLocal
+from app.models import Task
 
 router = APIRouter(prefix="/team4", tags=["Team 4 - Búsqueda"])
 
 @router.get("/tasks/search")
 def search(name: str):
-    # TODO: búsqueda exacta
-    return {"message": f"Buscar tarea {name}"}
+    db = SessionLocal()
+    try:
+        task = db.query(Task).filter(Task.name == name).first()
+        if not task:
+            raise HTTPException(status_code=404, detail=f"No se encontró tarea con nombre '{name}'")
+        return task
+    finally:
+        db.close()
+
 
 @router.get("/tasks/search/keyword")
 def keyword_search(keyword: str):
