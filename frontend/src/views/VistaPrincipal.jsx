@@ -16,8 +16,7 @@ export default function VistaPrincipal({ tareas, setTareas, onToast }) {
   const cargarTareas = useCallback(async () => {
     setCargando(true);
     setError(null);
-
-    // Si hay filtros activos usamos los endpoints de team4
+    
     let resultado;
     if (filtros.estado || filtros.keyword) {
       resultado = await busquedaAvanzada(filtros.keyword, filtros.estado);
@@ -27,7 +26,6 @@ export default function VistaPrincipal({ tareas, setTareas, onToast }) {
 
     if (resultado.error) {
       setError(resultado.error);
-      // Si el backend aún no tiene implementación real, usamos datos locales
       const local = localStorage.getItem("todo_tareas");
       if (local) {
         try { setTareas(JSON.parse(local)); } catch {}
@@ -47,7 +45,7 @@ export default function VistaPrincipal({ tareas, setTareas, onToast }) {
 
   useEffect(() => { cargarTareas(); }, [cargarTareas]);
 
-  // Filtro client-side por fecha y búsqueda (lo que el backend no filtra aún)
+  // Filtro client-side por fecha y búsqueda
   const tareasFiltradas = tareas.filter((t) => {
     if (filtros.desde && t.fechaLimite && t.fechaLimite < filtros.desde) return false;
     if (filtros.hasta && t.fechaLimite && t.fechaLimite > filtros.hasta) return false;
