@@ -75,5 +75,26 @@ def avg_length():
 
 @router.get("/stats/summary")
 def summary():
-    # TODO: resumen completo
-    return {"message": "Resumen general"}
+    total = fetch_one("SELECT COUNT(*) FROM tasks")
+
+    completed = fetch_one(
+        "SELECT COUNT(*) FROM tasks WHERE status = ?",
+        ("completed",)
+    )
+
+    pending = total - completed
+
+    avg = fetch_one("SELECT AVG(LENGTH(description)) FROM tasks")
+
+    if total == 0:
+        percentage_value = 0
+    else:
+        percentage_value = (completed / total) * 100
+
+    return {
+        "total_tasks": total,
+        "completed_tasks": completed,
+        "pending_tasks": pending,
+        "completion_percentage": round(percentage_value, 2),
+        "average_description_length": round(avg, 2) if avg else 0
+    }
