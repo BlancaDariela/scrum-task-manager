@@ -1,6 +1,7 @@
 from fastapi import APIRouter, HTTPException
 from app.database import SessionLocal, engine, Base
 from app.models import Task
+from app.schemas import TaskResponse
 from app.schemas import TaskCreate, TaskResponse
 
 router = APIRouter(prefix="/team1", tags=["Team 1 - CRUD"])
@@ -37,17 +38,36 @@ def get_tasks():
     finally:
         db.close()
 
-@router.get("/tasks/{id}")
+@router.get("/tasks/{id}", response_model=TaskResponse)
 def get_task(id: int):
-    # TODO: obtener tarea por ID
-    return {"message": f"Obtener tarea {id} (pendiente)"}
+    db = SessionLocal()
+    try:
+        task = db.query(Task).filter(Task.id == id).first()
+        if not task:
+            raise HTTPException(status_code=404, detail="Tarea no encontrada")
+        return task
+    finally:
+        db.close()
+
 
 @router.put("/tasks/{id}")
 def update_task(id: int):
-    # TODO: actualizar tarea
+    # TODO: actualizarø tarea
     return {"message": f"Actualizar tarea {id} (pendiente)"}
 
 @router.delete("/tasks/{id}")
 def delete_task(id: int):
-    # TODO: eliminar tarea
-    return {"message": f"Eliminar tarea {id} (pendiente)"}
+    db = SessionLocal()
+    try:
+        task = db.query(Task).filter(Task.id == id).first()
+
+        if not task:
+            raise HTTPException(status_code=404, detail="Tarea no encontrada")
+
+        db.delete(task)
+        db.commit()
+
+        return {"message": f"Tarea con id {id} eliminada correctamente"}
+    
+    finally:
+        db.close()
