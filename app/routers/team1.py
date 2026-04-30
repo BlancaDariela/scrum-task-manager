@@ -23,8 +23,19 @@ def create_task(task: TaskCreate):
     
 @router.get("/tasks")
 def get_tasks():
-    # TODO: obtener todas las tareas
-    return {"message": "Listar tareas (pendiente)"}
+    db = SessionLocal()
+    try:
+        tasks = db.query(Task).all()
+        return tasks
+
+    except Exception as e:
+        raise HTTPException(
+            status_code=500,
+            detail=f"Error al obtener las tareas: {str(e)}"
+        )
+
+    finally:
+        db.close()
 
 @router.get("/tasks/{id}")
 def get_task(id: int):
