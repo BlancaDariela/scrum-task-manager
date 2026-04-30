@@ -15,9 +15,15 @@ def get_db():
         db.close()
 
 @router.get("/reports/tasks")
-def report_tasks():
-    # TODO: reporte general
-    return {"message": "Reporte de tareas"}
+def report_tasks(db: Session = Depends(get_db)):
+    # Obtenemos todas las tareas de la tabla sin ningún filtro
+    todas_las_tareas = db.query(Task).all()
+    
+    return {
+        "message": "Reporte general de todas las tareas",
+        "total_tareas": len(todas_las_tareas),
+        "data": todas_las_tareas
+    }
 
 @router.get("/reports/completed")
 def report_completed(db: Session = Depends(get_db)):
