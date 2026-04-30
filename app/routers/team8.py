@@ -67,6 +67,22 @@ def report_full(db: Session = Depends(get_db)):
     }
 
 @router.get("/reports/summary")
-def report_summary():
+def report_summary(db: Session = Depends(get_db)):
     # TODO: resumen
+    # Resumen con conteos agregados por estatus
+    total = db.query(Task).count()
+    completadas = db.query(Task).filter(Task.status == "completed").count()
+    pendientes = db.query(Task).filter(Task.status == "pending").count()
+    
+    #Calcular porcentaje de completadas(evitando division por cero)
+    porcentaje_completadas = (completadas / total * 100) if total > 0 else 0
+    
+    return{
+        "message": "Resumen general de tareas",
+        "total_tareas": total,
+        "tareas_completadas": completadas,
+        "tareas_pendientes": pendientes,
+        "porcentaje_completadas": round(porcentaje_completadas, 2)
+    }
+    
     return {"message": "Resumen"}
