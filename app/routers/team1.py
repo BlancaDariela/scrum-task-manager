@@ -50,10 +50,21 @@ def get_task(id: int):
         db.close()
 
 
-@router.put("/tasks/{id}")
-def update_task(id: int):
-    # TODO: actualizarø tarea
-    return {"message": f"Actualizar tarea {id} (pendiente)"}
+@router.put("/tasks/{id}", response_model=TaskResponse)
+def update_task(id: int, task_update: TaskCreate):
+    db = SessionLocal()
+    try:
+        task = db.query(Task).filter(Task.id == id).first()
+        if not task:
+            raise HTTPException(status_code=404, detail="Tarea no encontrada")
+        task.title = task_update.title
+        task.description = task_update.description
+
+        db.commit()
+        db.refresh(task)
+        return task
+    finally:        
+        db.close()
 
 @router.delete("/tasks/{id}")
 def delete_task(id: int):
